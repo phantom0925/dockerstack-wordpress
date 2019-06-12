@@ -6,9 +6,11 @@ services:
     image: wordpress
     ports:
       - 8080:80
+    secrets:
+      - my-password
     environment:
       WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_PASSWORD: root
+      WORDPRESS_DB_PASSWORD: /run/secrets/my-password  # 使用dockersecret去部署密码
     networks:
       - my-network
     depends_on:
@@ -27,8 +29,10 @@ services:
 
   mysql:
     image: mysql:5.7
+    secrets:
+     - my-password
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: /run/secrets/my-password  
       MYSQL_DATABASE: wordpress
     volumes:
       - mysql-data:/var/lib/mysql
@@ -46,3 +50,6 @@ volumes:
 networks:
   my-network:
     driver: overlay
+#secrets: # 在没有事先创建好my-password,可以定义一个文件从文件中读取
+#  my-password:
+#    - file:./password
