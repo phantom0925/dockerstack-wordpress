@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+
+  web:
+    image: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: mysql
+      WORDPRESS_DB_PASSWORD: root
+    networks:
+      - my-network
+    depends_on:
+      - mysql
+    deploy:
+      mode: replicated  # 可以横向扩展
+      replicas: 3  # 初始化横向扩展为3
+      restart_policy:  # 重启设置
+        condition: on-failure # 条件，在失败的条件下
+        delay: 5s  # 演示5s
+        max_attempts: 3
+      update_config: # 更新策略
+        parallelism: 1 # 只能同时更新一个
+        delay: 10s
+        order: stop-first
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - my-network
+    deploy:
+      mode: global  # 设置为global,则不允许横向扩展
+      placement:
+        constraints:
+          - node.role == manager  # 限制我们的mysql服务只能部署到manager这个节点
+
+volumes:
+  mysql-data:
+
+networks:
+  my-network:
+    driver: overlay
