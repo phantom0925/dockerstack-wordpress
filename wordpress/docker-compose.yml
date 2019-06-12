@@ -30,7 +30,7 @@ services:
   mysql:
     image: mysql:5.7
     secrets:
-     - my-password
+      - my-password
     environment:
       MYSQL_ROOT_PASSWORD_FILE: /run/secrets/my-password  
       MYSQL_DATABASE: wordpress
@@ -50,6 +50,9 @@ volumes:
 networks:
   my-network:
     driver: overlay
+secrets:
+  my-password:
+     external: true
 #secrets: # 在没有事先创建好my-password,可以定义一个文件从文件中读取
 #  my-password:
 #    - file:./password
