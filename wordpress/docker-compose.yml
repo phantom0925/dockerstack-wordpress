@@ -10,7 +10,7 @@ services:
       - my-password
     environment:
       WORDPRESS_DB_HOST: mysql
-      WORDPRESS_DB_PASSWORD: /run/secrets/my-password  # 使用dockersecret去部署密码
+      WORDPRESS_DB_PASSWORD_FILE: /run/secrets/my-password  # 使用dockersecret去部署密码
     networks:
       - my-network
     depends_on:
@@ -32,7 +32,7 @@ services:
     secrets:
      - my-password
     environment:
-      MYSQL_ROOT_PASSWORD: /run/secrets/my-password  
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/my-password  
       MYSQL_DATABASE: wordpress
     volumes:
       - mysql-data:/var/lib/mysql
